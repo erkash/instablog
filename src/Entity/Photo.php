@@ -5,9 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PhotoRepository")
+ * @Vich\Uploadable
  */
 class Photo
 {
@@ -33,6 +37,15 @@ class Photo
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
+
+    /**
+     * NOTE: This is not a mapped field of entity metadata, just a simple property.
+     *
+     * @Vich\UploadableField(mapping="photo_file", fileNameProperty="photoName")
+     *
+     * @var File
+     */
+    private $photo;
 
     public function __construct()
     {
@@ -97,5 +110,21 @@ class Photo
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getPhoto(): File
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param File $photo
+     */
+    public function setPhoto(File $photo): void
+    {
+        $this->photo = $photo;
     }
 }

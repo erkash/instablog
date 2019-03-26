@@ -1,0 +1,11 @@
+vich_uploader:
+    db_driver: orm
+    mappings:
+        photo_file:
+            uri_prefix:         /uploads/photos
+            upload_destination: '%kernel.root_dir%/../public/uploads/photos'
+            namer:              vich_uploader.namer_uniqid
+        avatar_file:
+            uri_prefix:         /uploads/avatars
+            upload_destination: '%kernel.root_dir%/../public/uploads/avatars'
+            namer:              vich_uploader.namer_uniqid
