@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}InstaKilo{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="offset-2 col-lg-4">
+                <img src="{{ asset('images/instagram_index.jpg') }}" alt="instakilo">
+            </div>
+            <div class="col-lg-4">
+                <img src="{{ asset('images/logo.jpg') }}" alt="instakilo">
+                <h3 class="text-muted text-center">
+                    <span class="text-info">Insta</span><span class="text-danger">kilo</span>
+                    - в тысячу раз лучше, чем Instagram!
+                </h3>
+                <a href="{{ path('fos_user_security_login') }}" class="btn btn-lg btn-block btn-info">Вход</a>
+                <h5 class="text-center">Или</h5>
+                <a href="{{ path('fos_user_registration_register') }}" class="btn btn-lg btn-block btn-primary">Регистрация</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -113,9 +113,9 @@ class Photo
     }
 
     /**
-     * @return File
+     * @return File|null
      */
-    public function getPhoto(): File
+    public function getPhoto()
     {
         return $this->photo;
     }
