@@ -1,0 +1,66 @@
+{% extends "site/header.html.twig" %}
+
+{% block title %}InstaKilo - Лента{% endblock %}
+
+{% block content %}
+    <div class="container content">
+        <div class="row">
+            <h1 class="text-center">
+                Welcome to the <span class="text-info">Insta</span><span class="text-danger">kilo</span>
+            </h1>
+
+            <div class="offset-3 col-lg-6 new-btn">
+                <button type="button" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                        data-target=".bs-example-modal-lg">
+                    Добавить новое Фото
+                </button>
+            </div>
+
+            <div class="modal fade bs-example-modal-lg new" tabindex="-1" role="dialog"
+                 aria-labelledby="myLargeModalLabel">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        {{ form_start(photoForm, {'action': path('add-photo'), 'method': 'POST'}) }}
+                        {{ form_widget(photoForm) }}
+                        {{ form_end(photoForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% for photo in photos|reverse(true) %}
+            <div class="row">
+                <div class="offset-3 col-lg-6 photo">
+                    <p>
+                        <b>Автор:
+{#                            <a href="{{ path('app_user_profile', {'user_id' : photo.user.id}) }}">#}
+{#                                {{ photo.user }}#}
+{#                            </a>#}
+                        </b>
+                    </p>
+                    <img class="img-responsive" src="{{ vich_uploader_asset(photo, 'photo') }}" alt="">
+
+{#                    <div class="col-lg-2 like">{{ form(like_form[photo.id]) }}</div>#}
+{#                    <span class="press-like">Нажали лайк {{  }} раза</span>#}
+                    <br>
+                    <br>
+                    {% for comment in photo.comments %}
+                        <div class="comment">
+{#                            <a href="{{ path('app_user_profile', {'user_id' : comment.user.id}) }}">#}
+{#                                <b>{{ comment.user }}</b>#}
+{#                            </a>#}
+                            : {{ comment.comment }}
+                        </div>
+                    {% endfor %}
+                    <div>
+                        {% set comment = commentForm.createView %}
+                        {{ form_start(comment, {'action' : path('app_comment_new', {'id' : photo.id})}) }}
+                        {{ form_widget(comment.comment) }}
+                        {{ form_widget(comment.submit, {'attr': {'class': 'btn btn-xs btn-info add-comment'},'label': 'Отправить'}) }}
+                        {{ form_end(comment) }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
