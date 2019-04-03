@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentController extends AbstractController
 {
     /**
-     * @Route("/photo-{id}/new-comment", methods={"POST"})
+     * @Route("/photo-{id}/new-comment", methods={"POST"}, name="new-comment")
      * @param Request $request
      * @param Photo $photo
      * @return Response
@@ -33,6 +33,6 @@ class CommentController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('app_site_feed');
+        return $this->redirectToRoute('feed');
     }
 }

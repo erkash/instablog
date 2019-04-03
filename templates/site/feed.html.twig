@@ -5,7 +5,7 @@
 {% block content %}
     <div class="container content">
         <div class="row">
-            <h1 class="text-center">
+            <h1 class="offset-4">
                 Welcome to the <span class="text-info">Insta</span><span class="text-danger">kilo</span>
             </h1>
 
@@ -33,12 +33,12 @@
                 <div class="offset-3 col-lg-6 photo">
                     <p>
                         <b>Автор:
-{#                            <a href="{{ path('app_user_profile', {'user_id' : photo.user.id}) }}">#}
-{#                                {{ photo.user }}#}
-{#                            </a>#}
+                            <a href="{{ path('profile', {'id' : photo.user.id}) }}">
+                                {{ photo.user }}
+                            </a>
                         </b>
                     </p>
-                    <img class="img-responsive" src="{{ vich_uploader_asset(photo, 'photo') }}" alt="">
+                    <img class="img-fluid" src="{{ vich_uploader_asset(photo, 'photo') }}" alt="">
 
 {#                    <div class="col-lg-2 like">{{ form(like_form[photo.id]) }}</div>#}
 {#                    <span class="press-like">Нажали лайк {{  }} раза</span>#}
@@ -46,15 +46,15 @@
                     <br>
                     {% for comment in photo.comments %}
                         <div class="comment">
-{#                            <a href="{{ path('app_user_profile', {'user_id' : comment.user.id}) }}">#}
-{#                                <b>{{ comment.user }}</b>#}
-{#                            </a>#}
+                            <a href="{{ path('profile', {'id' : comment.user.id}) }}">
+                                <b>{{ comment.user }}</b>
+                            </a>
                             : {{ comment.comment }}
                         </div>
                     {% endfor %}
                     <div>
                         {% set comment = commentForm.createView %}
-                        {{ form_start(comment, {'action' : path('app_comment_new', {'id' : photo.id})}) }}
+                        {{ form_start(comment, {'action' : path('new-comment', {'id' : photo.id})}) }}
                         {{ form_widget(comment.comment) }}
                         {{ form_widget(comment.submit, {'attr': {'class': 'btn btn-xs btn-info add-comment'},'label': 'Отправить'}) }}
                         {{ form_end(comment) }}

@@ -23,12 +23,12 @@
 }
 
 header {
-    height: 50px;
     position: fixed;
-    background-color: white;
+    background-color: #fff;
     width: 100%;
     top: 0;
     z-index: 10000;
+    padding: 10px 0 10px 0;
 }
 
 .logo {
@@ -37,18 +37,26 @@ header {
 }
 
 .content {
-    margin-top: 55px;
+    margin-top: 5%;
 }
 
-.menu {
+nav li {
+    display: inline-block;
+}
+
+nav a {
     color: black;
+    cursor: pointer;
+    padding: 20px;
+}
+
+nav a:hover {
+    text-decoration: none;
+    background-color: #e7e7e7;
 }
 
 .logout {
     float: right;
-    display: block;
-    cursor: pointer;
-    padding: 15px;
 }
 
 .logout:hover {

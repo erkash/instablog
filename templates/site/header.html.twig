@@ -7,15 +7,14 @@
                 <a href="{{ path('site') }}">
                     <img alt="logo" class="logo" src="{{ asset('images/logo.jpg') }}">
                 </a>
-
-                <ul class="nav navbar-nav">
-{#                    <li><a href="{{ path('app_user_allusers') }}" class="menu">Users</a></li>#}
-                    <li><a href="{{ path('app_site_feed') }}" class="menu">Feed</a></li>
-{#                    <li><a href="{{ path('app_user_profile', {'id' : app.user.id}) }}"  class="menu">Profile</a></li>#}
-                </ul>
-
-                <a href="{{ path('fos_user_security_logout') }}" class="menu logout">Logout</a>
-                <div style="clear: both"></div>
+                <nav>
+                    <ul>
+                        <li><a href="{{ path('users') }}">Пользователи</a></li>
+                        <li><a href="{{ path('feed') }}">Лента</a></li>
+                        <li><a href="{{ path('profile', {'id' : app.user.id}) }}">Профиль</a></li>
+                        <li class="logout"><a href="{{ path('fos_user_security_logout') }}">Выйти</a></li>
+                    </ul>
+                </nav>
             </div>
         </header>
     {% endblock header %}

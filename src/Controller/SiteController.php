@@ -23,7 +23,7 @@ class SiteController extends AbstractController
     }
 
     /**
-     * @Route("/feed")
+     * @Route("/feed", name="feed")
      */
     public function feedAction()
     {
@@ -67,6 +67,6 @@ class SiteController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('app_site_feed');
+        return $this->redirectToRoute('feed');
     }
 }

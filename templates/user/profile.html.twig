@@ -1,0 +1,32 @@
+{% extends 'site/header.html.twig' %}
+
+{% block title %}InstaKilo - Профиль{% endblock %}
+
+{% block content %}
+    <div class="container content">
+        <div class="row">
+            <div class="offset-3 col-lg-3 avatar">
+                <img class="img-responsive" src="{{ vich_uploader_asset(profile, 'imageFile') }}" alt="">
+            </div>
+            <div class="col-lg-3">
+                <h1 class="text-center">
+                    <span>&#171;</span>{{ profile.username }}<span>&#187;</span>
+                </h1>
+                <div class="text-center">
+                    <b>{{ posts|length }} посты</b> <span>&bull;</span>
+                    <b>{{ followers }} подписчики</b> <span>&bull;</span>
+                    <b>{{ followings }} подписки</b>
+                </div>
+                <h3 class="text-center">{{ profile.name }}</h3>
+            </div>
+        </div>
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-lg-4 profile">
+                    <img class="img-profile" src="{{ vich_uploader_asset(post, 'photo') }}" alt="">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

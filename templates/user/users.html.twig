@@ -1,0 +1,33 @@
+{% extends 'site/header.html.twig' %}
+
+{% block title %}InstaKilo - Список пользователей{% endblock %}
+
+{% block content %}
+    <div class="container content">
+        <div class="row">
+            <h1 class="text-center">
+                Пользователи в <span class="text-info">Insta</span><span class="text-danger">kilo</span>
+            </h1>
+            <div class="offset-3 col-lg-6">
+                <table class="table table-responsive text-center">
+                    {% for user in users %}
+                        {% if currentUser.id != user.id %}
+                            <tr>
+                                <td>
+                                    <img class="img-circle img-users" alt=""
+                                         src="{{ vich_uploader_asset(user, 'imageFile') }}">
+                                </td>
+                                <td>
+                                    <a href="{{ path('profile', {'id' : user.id}) }}"  class="img-middle">
+                                        <b>{{ user.username }}</b>
+                                    </a>
+                                </td>
+                                <td>{{ form(followForm[user.id]) }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
