@@ -75,6 +75,11 @@ class User extends BaseUser
      */
     private $followings;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Photo", inversedBy="likes")
+     */
+    private $likes;
+
     public function __construct()
     {
         parent::__construct();
@@ -82,6 +87,7 @@ class User extends BaseUser
         $this->photos     = new ArrayCollection();
         $this->followers  = new ArrayCollection();
         $this->followings = new ArrayCollection();
+        $this->likes      = new ArrayCollection();
     }
 
     /**
@@ -243,6 +249,32 @@ class User extends BaseUser
         if ($this->followings->contains($following)) {
             $this->followings->removeElement($following);
             $following->removeFollower($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Photo[]
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(Photo $like): self
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes[] = $like;
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Photo $like): self
+    {
+        if ($this->likes->contains($like)) {
+            $this->likes->removeElement($like);
         }
 
         return $this;

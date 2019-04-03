@@ -47,9 +47,15 @@ class Photo
      */
     private $photo;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="likes")
+     */
+    private $likes;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->likes    = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,5 +132,33 @@ class Photo
     public function setPhoto(File $photo): void
     {
         $this->photo = $photo;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(User $like): self
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes[] = $like;
+            $like->addLike($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(User $like): self
+    {
+        if ($this->likes->contains($like)) {
+            $this->likes->removeElement($like);
+            $like->removeLike($this);
+        }
+
+        return $this;
     }
 }
