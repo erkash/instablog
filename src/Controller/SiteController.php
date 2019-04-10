@@ -32,7 +32,13 @@ class SiteController extends AbstractController
         if (!$user)
             return $this->redirectToRoute('fos_user_security_login');
 
-        $photos      = $this->getDoctrine()->getRepository(Photo::class)->findAll();
+        $photos   = $this->getDoctrine()->getRepository(Photo::class)->findAll();
+        $contains = null;
+
+        foreach ($photos as $photo) {
+            $contains = $photo->getLikes()->contains($user);
+        }
+
         $photoForm   = $this->createForm(PhotoType::class);
         $commentForm = $this->createForm(CommentType::class);
 
@@ -41,6 +47,7 @@ class SiteController extends AbstractController
             'photos'      => $photos,
             'user'        => $user,
             'commentForm' => $commentForm,
+            'contains'    => $contains
         ]);
     }
 

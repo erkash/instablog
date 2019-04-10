@@ -76,7 +76,7 @@ class User extends BaseUser
     private $followings;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Photo", inversedBy="likes")
+     * @ORM\OneToMany(targetEntity="App\Entity\PhotoLike", mappedBy="user")
      */
     private $likes;
 
@@ -87,7 +87,7 @@ class User extends BaseUser
         $this->photos     = new ArrayCollection();
         $this->followers  = new ArrayCollection();
         $this->followings = new ArrayCollection();
-        $this->likes      = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     /**
@@ -255,26 +255,31 @@ class User extends BaseUser
     }
 
     /**
-     * @return Collection|Photo[]
+     * @return Collection|PhotoLike[]
      */
     public function getLikes(): Collection
     {
         return $this->likes;
     }
 
-    public function addLike(Photo $like): self
+    public function addLike(PhotoLike $like): self
     {
         if (!$this->likes->contains($like)) {
             $this->likes[] = $like;
+            $like->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeLike(Photo $like): self
+    public function removeLike(PhotoLike $like): self
     {
         if ($this->likes->contains($like)) {
             $this->likes->removeElement($like);
+            // set the owning side to null (unless already changed)
+            if ($like->getUser() === $this) {
+                $like->setUser(null);
+            }
         }
 
         return $this;

@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Photo;
+use App\Entity\PhotoLike;
 use App\Entity\User;
 use App\Form\FollowType;
 use App\Form\UnsubscribeType;
+use App\Repository\PhotoLikeRepository;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -89,11 +92,9 @@ class UserController extends AbstractController
             return $this->redirectToRoute('fos_user_security_login');
 
         $followed->addFollower($follower);
-        $follower->addFollower($followed);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($followed);
-        $em->persist($follower);
         $em->flush();
 
         return $this->redirectToRoute('users');
@@ -111,7 +112,6 @@ class UserController extends AbstractController
         if (!$follower)
             return $this->redirectToRoute('fos_user_security_login');
 
-        $followed->removeFollower($follower);
         $follower->removeFollowing($followed);
 
         $em = $this->getDoctrine()->getManager();
@@ -123,11 +123,13 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/like/{id}", methods={"POST"}, name="like")
+     * @Route("/photo/{id}/like", name="like")
      * @param Photo $photo
-     * @return RedirectResponse|Response
+     * @param ObjectManager $manager
+     * @param PhotoLikeRepository $likeRepo
+     * @return Response
      */
-    public function like(Photo $photo)
+    public function like(Photo $photo, ObjectManager $manager, PhotoLikeRepository $likeRepo)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -135,37 +137,33 @@ class UserController extends AbstractController
         if (!$user)
             return $this->redirectToRoute('fos_user_security_login');
 
-        $photo->addLike($user);
-        $user->addLike($photo);
+        if ($photo->isLikedByUser($user)) {
+            $like = $likeRepo->findOneBy([
+                'user'  => $user,
+                'photo' => $photo
+            ]);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($photo);
-        $em->persist($user);
-        $em->flush();
+            $manager->remove($like);
+            $manager->flush();
 
-        return $this->redirectToRoute('feed');
-    }
+            return $this->json([
+               'code'    => 200,
+               'message' => 'like успешно удален',
+                'likes'  => $likeRepo->count(['photo' => $photo])
+            ], 200);
+        }
 
-    /**
-     * @Route("/dislike/{id}", methods={"POST"}, name="dislike")
-     * @param Photo $photo
-     * @return RedirectResponse|Response
-     */
-    public function dislike(Photo $photo)
-    {
-        $user = $this->getUser();
+        $like = new PhotoLike();
+        $like->setPhoto($photo)
+             ->setUser($user);
 
-        if (!$user)
-            return $this->redirectToRoute('fos_user_security_login');
+        $manager->persist($like);
+        $manager->flush();
 
-        $photo->removeLike($user);
-        $user->removeLike($photo);
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($photo);
-        $em->persist($user);
-        $em->flush();
-
-        return $this->redirectToRoute('feed');
+        return $this->json([
+            'code'    => 200,
+            'message' => 'like успешно добавлен',
+            'likes'   => $likeRepo->count(['photo' => $photo])
+        ], 200);
     }
 }

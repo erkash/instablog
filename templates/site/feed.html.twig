@@ -39,9 +39,15 @@
                         </b>
                     </p>
                     <img class="img-fluid" src="{{ vich_uploader_asset(photo, 'photo') }}" alt="">
-
-{#                    <div class="col-lg-2 like">{{ form(like_form[photo.id]) }}</div>#}
-{#                    <span class="press-like">Нажали лайк {{  }} раза</span>#}
+                    <a href="{{ path('like', {'id': photo.id}) }}" class="btn btn-link js-like">
+                        {% if app.user and photo.likedByUser(app.user) %}
+                            <i class="fas fa-thumbs-up"></i>
+                        {% else %}
+                            <i class="far fa-thumbs-up"></i>
+                        {% endif %}
+                        <span class="js-likes">{{ photo.likes.count }}</span>
+                        <span class="js-label">Likes</span>
+                    </a>
                     <br>
                     <br>
                     {% for comment in photo.comments %}
@@ -63,4 +69,27 @@
             </div>
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function onClickBtnLike(e) {
+            e.preventDefault();
+            const url       = this.href;
+            const spanCount = this.querySelector('span.js-likes');
+            const icon      = this.querySelector('i');
+
+            axios.get(url).then(function (response) {
+                spanCount.textContent = response.data.likes;
+                if (icon.classList.contains('fas'))
+                    icon.classList.replace('fas', 'far');
+                else
+                    icon.classList.replace('far', 'fas')
+            });
+        }
+
+        document.querySelectorAll('a.js-like').forEach(function (link) {
+            link.addEventListener('click', onClickBtnLike)
+        })
+    </script>
 {% endblock %}

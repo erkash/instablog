@@ -48,14 +48,14 @@ class Photo
     private $photo;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="likes")
+     * @ORM\OneToMany(targetEntity="App\Entity\PhotoLike", mappedBy="photo")
      */
     private $likes;
 
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->likes    = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,30 +135,43 @@ class Photo
     }
 
     /**
-     * @return Collection|User[]
+     * @return Collection|PhotoLike[]
      */
     public function getLikes(): Collection
     {
         return $this->likes;
     }
 
-    public function addLike(User $like): self
+    public function addLike(PhotoLike $like): self
     {
         if (!$this->likes->contains($like)) {
             $this->likes[] = $like;
-            $like->addLike($this);
+            $like->setPhoto($this);
         }
 
         return $this;
     }
 
-    public function removeLike(User $like): self
+    public function removeLike(PhotoLike $like): self
     {
         if ($this->likes->contains($like)) {
             $this->likes->removeElement($like);
-            $like->removeLike($this);
+            // set the owning side to null (unless already changed)
+            if ($like->getPhoto() === $this) {
+                $like->setPhoto(null);
+            }
         }
 
         return $this;
+    }
+
+    public function isLikedByUser(User $user) :bool
+    {
+        /** @var PhotoLike $like */
+        foreach ($this->likes as $like) {
+            if ($like->getUser() === $user)  return true;
+        }
+
+        return false;
     }
 }

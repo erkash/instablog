@@ -14,7 +14,7 @@
 }
 
 .like {
-    margin: 5px -25px -15px -15px;
+    margin: 5px -25px -25px -15px;
     display: block;
 }
 
@@ -117,7 +117,7 @@ nav a:hover {
     margin-bottom: -10px;
 }
 
-.press-like {
-    margin-top: 7px;
+.likes_count {
+    margin-left: 12%;
     display: inline-block;
 }
