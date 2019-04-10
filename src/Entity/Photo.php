@@ -55,7 +55,7 @@ class Photo
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->likes = new ArrayCollection();
+        $this->likes    = new ArrayCollection();
     }
 
     public function getId(): ?int

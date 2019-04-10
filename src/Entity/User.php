@@ -87,7 +87,7 @@ class User extends BaseUser
         $this->photos     = new ArrayCollection();
         $this->followers  = new ArrayCollection();
         $this->followings = new ArrayCollection();
-        $this->likes = new ArrayCollection();
+        $this->likes      = new ArrayCollection();
     }
 
     /**
