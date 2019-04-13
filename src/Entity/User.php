@@ -284,4 +284,13 @@ class User extends BaseUser
 
         return $this;
     }
+
+    public function isFollowedByUser(User $user)
+    {
+        foreach ($this->followers as $follower) {
+            if ($follower === $user)  return true;
+        }
+
+        return false;
+    }
 }

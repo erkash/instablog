@@ -5,13 +5,13 @@
 {% block content %}
     <div class="container content">
         <div class="row">
-            <h1 class="text-center">
+            <h1 class="offset-4">
                 Пользователи в <span class="text-info">Insta</span><span class="text-danger">kilo</span>
             </h1>
             <div class="offset-3 col-lg-6">
                 <table class="table table-responsive text-center">
                     {% for user in users %}
-                        {% if currentUser.id != user.id %}
+                        {% if app.user.id != user.id %}
                             <tr>
                                 <td>
                                     <img class="img-circle img-users" alt=""
@@ -22,7 +22,15 @@
                                         <b>{{ user.username }}</b>
                                     </a>
                                 </td>
-                                <td>{{ form(followForm[user.id]) }}</td>
+                                <td>
+                                    <a href="{{ path('subscribe', {'id': user.id}) }}" class="js-subs">
+                                        {% if app.user and user.followedByUser(app.user) %}
+                                            <b class="un-sub">отписаться</b>
+                                        {% else %}
+                                            <b class="sub">подписаться</b>
+                                        {% endif %}
+                                    </a>
+                                </td>
                             </tr>
                         {% endif %}
                     {% endfor %}
@@ -30,4 +38,28 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        function onClickBtnSub(e) {
+            e.preventDefault();
+            const url  = this.href;
+            const cont = this.querySelector('b');
+
+            axios.get(url).then(function () {
+                if (cont.classList.contains('sub')){
+                    cont.innerHTML = 'отписаться';
+                    cont.classList.replace('sub', 'un-sub');
+                } else {
+                    cont.innerHTML = 'подписаться';
+                    cont.classList.replace('un-sub', 'sub');
+                }
+
+            });
+        }
+
+        document.querySelectorAll('a.js-subs').forEach(function(link) {
+            link.addEventListener('click', onClickBtnSub)
+        })
+    </script>
 {% endblock %}

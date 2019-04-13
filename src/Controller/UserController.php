@@ -5,8 +5,6 @@ namespace App\Controller;
 use App\Entity\Photo;
 use App\Entity\PhotoLike;
 use App\Entity\User;
-use App\Form\FollowType;
-use App\Form\UnsubscribeType;
 use App\Repository\PhotoLikeRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,34 +19,10 @@ class UserController extends AbstractController
      */
     public function allUsers()
     {
-        $currentUser = $this->getUser();
         $users = $this->getDoctrine()->getRepository(User::class)->findAll();
 
-        $followForm = [];
-
-        /** @var User $user */
-        foreach ($users as $user) {
-            if (!$user->getFollowers()->contains($this->getUser())) {
-                $followForm[$user->getId()] = $this->createForm(FollowType::class, null, [
-                    'method' => 'POST',
-                    'action' => $this->generateUrl('subscribe', [
-                        'id' => $user->getId()
-                    ])
-                ])->createView();
-            } else {
-                $followForm[$user->getId()] = $this->createForm(UnsubscribeType::class, null, [
-                    'method' => 'POST',
-                    'action' => $this->generateUrl('unsubscribe', [
-                        'id' => $user->getId()
-                    ])
-                ])->createView();
-            }
-        }
-
         return $this->render('user/users.html.twig', [
-            'users'        => $users,
-            'followForm'   => $followForm,
-            'currentUser'  => $currentUser
+            'users' => $users
         ]);
     }
 
@@ -80,46 +54,32 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/subscribe/{id}", methods={"POST"}, name="subscribe")
-     * @param User $followed
+     * @Route("/subscribe/{id}", name="subscribe")
+     * @param User $user
+     * @param ObjectManager $manager
      * @return RedirectResponse|Response
      */
-    public function subscribe(User $followed)
+    public function subscribe(User $user, ObjectManager $manager)
     {
         $follower = $this->getUser();
 
         if (!$follower)
             return $this->redirectToRoute('fos_user_security_login');
 
-        $followed->addFollower($follower);
+        if ($user->isFollowedByUser($follower)) {
+            $user->removeFollower($follower);
+            $manager->persist($user);
+            $manager->flush();
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($followed);
-        $em->flush();
+            return $this->json(['code' => 200,], 200);
+        }
 
-        return $this->redirectToRoute('users');
-    }
+        $user->addFollower($follower);
 
-    /**
-     * @Route("/unsubscribe/{id}", methods={"POST"}, name="unsubscribe")
-     * @param User $followed
-     * @return RedirectResponse|Response
-     */
-    public function unSubscribe(User $followed)
-    {
-        $follower = $this->getUser();
+        $manager->persist($user);
+        $manager->flush();
 
-        if (!$follower)
-            return $this->redirectToRoute('fos_user_security_login');
-
-        $follower->removeFollowing($followed);
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($followed);
-        $em->persist($follower);
-        $em->flush();
-
-        return $this->redirectToRoute('users');
+        return $this->json(['code' => 200,], 200);
     }
 
     /**
