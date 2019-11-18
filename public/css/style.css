@@ -149,3 +149,7 @@ a:hover {
     color: black;
     font-weight: bold;
 }
+
+.posts-content {
+    margin-top: 50px;
+}
